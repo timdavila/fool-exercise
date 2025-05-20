@@ -1,6 +1,7 @@
 'use client'
 
 import useWatchedCompanies from 'src/hooks/useWatchedCompanies'
+import WatchListSkeleton from './loading/watchListSkeleton'
 import {useEffect, useState} from 'react'
 import {Instrument} from '~types/quotes'
 import WatchButton from './ui/watchButton'
@@ -13,6 +14,9 @@ const WatchList = () => {
   
   return (
     <div style={{ maxHeight: '200px', overflowY: 'auto'}}>
+      {(!watches.length ? (
+        <WatchListSkeleton />
+      ) : (
       <table className="table-auto">
       <thead>
         <tr>
@@ -45,6 +49,7 @@ const WatchList = () => {
         ))}
       </tbody>
       </table>
+      ))}
     </div>
   )
 }
