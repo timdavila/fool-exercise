@@ -8,14 +8,27 @@ import WatchButton from './ui/watchButton'
 import CompanyLink from './ui/companyLink'
 
 const WatchList = () => {
+  const { data, loading, error } = useWatchedCompanies()
+  const [watchList, setWatchList] = useState<Instrument[] | null>(null)
 
-  const {data} = useWatchedCompanies()
-  const watches = data?.instruments || []
-  
+  useEffect(() => {
+    if (data) {
+      setWatchList(data?.instruments);
+    }
+  }, [data])
+
+  if (loading || watchList === null) {
+    return <WatchListSkeleton />
+  }
+
+  if (error) {
+    return <div>Error loading watch list</div>
+  }
+
   return (
     <div style={{ maxHeight: '200px', overflowY: 'auto'}}>
-      {(!watches.length ? (
-        <WatchListSkeleton />
+      {(!watchList.length ? (
+        <div>No watched companies yet</div>
       ) : (
       <table className="table-auto">
       <thead>
@@ -29,7 +42,7 @@ const WatchList = () => {
         </tr>
       </thead>
       <tbody>
-        {watches.map(watch => (
+        {watchList.map(watch => (
           <tr key={watch.instrumentId} className="text-center">
             <td className="px-4 py-2">
             <CompanyLink symbol={watch.symbol} />
