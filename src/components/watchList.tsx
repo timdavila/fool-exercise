@@ -2,22 +2,33 @@
 
 import useWatchedCompanies from 'src/hooks/useWatchedCompanies'
 import WatchListSkeleton from './loading/watchListSkeleton'
-import {useEffect, useState} from 'react'
-import {Instrument} from '~types/quotes'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../store'
+import { setWatchlist, unWatchInstrument } from '../store/watchListSlice'
 import WatchButton from './ui/watchButton'
 import CompanyLink from './ui/companyLink'
+import { Instrument } from '~types/quotes'
 
 const WatchList = () => {
-  const { data, loading, error } = useWatchedCompanies()
-  const [watchList, setWatchList] = useState<Instrument[] | null>(null)
+  const dispatch = useDispatch()
+  const watchlist = useSelector((state: RootState) => state.watchlist.instruments)
+  const { data: initialData, loading, error } = useWatchedCompanies()
 
   useEffect(() => {
-    if (data) {
-      setWatchList(data?.instruments);
+    if (initialData?.instruments.length) {
+      const timer = setTimeout(() => {
+        dispatch(setWatchlist(initialData.instruments))
+      }, 1000)
+      return () => clearTimeout(timer)
     }
-  }, [data])
+  }, [initialData, dispatch])
 
-  if (loading || watchList === null) {
+  const handleUnwatchInstrument = (instrument: Instrument) => {
+    dispatch(unWatchInstrument(instrument))
+  }
+
+  if (loading || watchlist === null) {
     return <WatchListSkeleton />
   }
 
@@ -27,10 +38,10 @@ const WatchList = () => {
 
   return (
     <div style={{ maxHeight: '200px', overflowY: 'auto'}}>
-      {(!watchList.length ? (
+      {(!watchlist.length ? (
         <div>No watched companies yet</div>
       ) : (
-      <table className="table-auto">
+      <table className="w-full mb-12px">
       <thead>
         <tr>
         <th className="px-4 py-2">Symbol</th>
@@ -42,20 +53,21 @@ const WatchList = () => {
         </tr>
       </thead>
       <tbody>
-        {watchList.map(watch => (
-          <tr key={watch.instrumentId} className="text-center">
+        {watchlist.map(instrument => (
+          <tr key={instrument.instrumentId} className="text-center">
             <td className="px-4 py-2">
-            <CompanyLink symbol={watch.symbol} />
+            <CompanyLink symbol={instrument.symbol} />
             </td>
-            <td className="px-4 py-2">{watch.name}</td>
+            <td className="px-4 py-2">{instrument.name}</td>
             <td className="px-4 py-2"></td>
             <td className="px-4 py-2"></td>
             <td className="px-4 py-2"></td>
             <td className="px-4 py-2">
             <WatchButton 
-              instrumentId={watch.instrumentId} 
+              instrumentId={instrument.instrumentId}
               includeText={false}
               isCurrentlyWatching={true}
+              toggleWatching={() => handleUnwatchInstrument(instrument)}
             />
             </td>
           </tr>
