@@ -77,7 +77,7 @@ export default function WatchList(){
         {enrichedWatchlist.map(instrument => (
           <tr key={instrument.instrumentId} className="text-center">
             <td className="px-4 py-2">
-            <CompanyLink symbol={instrument.symbol} />
+            <CompanyLink exchange={instrument.exchange} symbol={instrument.symbol} />
             </td>
             <td className="px-4 py-2">{instrument.name}</td>
             <td className="px-4 py-2">{instrument.currentPrice}</td>

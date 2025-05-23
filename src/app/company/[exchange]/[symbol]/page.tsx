@@ -2,15 +2,15 @@ import {useQuery} from "@apollo/client"
 import {GET_COMPANY_DATA} from "~data/queries"
 import apolloServerClient from "~lib/apollo-server-client"
 import {Instrument, Quote, QuoteFundamentals} from "~types/quotes"
-import CompanyHeader, {CompanyHeaderProps} from "../_components/companyHeader"
-import CompanyData from "../_components/companyData"
+import CompanyHeader, {CompanyHeaderProps} from "../../_components/companyHeader"
+import CompanyData from "../../_components/companyData"
 
 async function CompanyPage({
   params,
 }: {
-  params: {symbol: string}
+  params: {symbol: string, exchange: string}
 }) {
-  const {symbol} = params
+  const {exchange, symbol} = params
   const client = await apolloServerClient()
   const {data: companyData} = await client.query({
     query: GET_COMPANY_DATA,
