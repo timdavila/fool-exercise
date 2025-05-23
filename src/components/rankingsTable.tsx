@@ -4,19 +4,20 @@ import {Ranking} from "~types/rankings";
 import {formatPercent} from "~utils/formatters";
 import WatchButton from "./ui/watchButton";
 import CompanyLink from "./ui/companyLink";
-import { watchInstrument } from '../store/watchListSlice'
+import { toggleWatchingInstrument } from '../store/watchListSlice'
 import { Instrument } from "~types/quotes";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from '../store'
 
 type RankingsProps = {
   rankings: Ranking[]
 }
 const RankingsTable = ({ rankings }: RankingsProps) => {
+  const watchlist = useSelector((state: RootState) => state.watchlist.instruments)
   const dispatch = useDispatch()
 
   const handleToggleInstrument = (instrument: Instrument) => {
-    // Logic to toggle the watch status of the instrument
-    dispatch(watchInstrument(instrument))
+    dispatch(toggleWatchingInstrument(instrument))
   }
   
   return (
@@ -32,7 +33,11 @@ const RankingsTable = ({ rankings }: RankingsProps) => {
       </tr>
       </thead>
       <tbody>
-      {rankings.map(ranking => (
+      {rankings.map(ranking => {
+        const isWatched = watchlist.some(
+          watched => watched.instrumentId === ranking.instrument.instrumentId
+        )
+        return (
         <tr key={ranking.currentRank.value} className="text-center">
           <td>{ranking.currentRank.value}</td>
           <td>
@@ -45,11 +50,12 @@ const RankingsTable = ({ rankings }: RankingsProps) => {
               <WatchButton 
               instrumentId={ranking.instrument.instrumentId} 
               includeText={false}
+              isCurrentlyWatching={isWatched}
               toggleWatching={() => handleToggleInstrument(ranking.instrument)}
               />
             </td>
         </tr>
-      ))}
+      )})}
       </tbody>
     </table>
   )

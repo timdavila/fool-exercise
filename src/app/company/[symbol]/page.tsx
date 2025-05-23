@@ -22,9 +22,7 @@ async function CompanyPage({
   const quoteFundamentals = companyData.quoteFundamentals as QuoteFundamentals
 
   const headerData: CompanyHeaderProps = {
-    instrumentId: instrumentData.instrumentId,
-    symbol: instrumentData.symbol,
-    name: instrumentData.name,
+    instrument: instrumentData,
     currency: quoteData.currentPrice.currencyCode,
     price: quoteData.currentPrice.amount,
     change: quoteData.priceChange.amount,
