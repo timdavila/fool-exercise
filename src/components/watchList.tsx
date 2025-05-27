@@ -10,6 +10,7 @@ import WatchButton from './ui/watchButton'
 import CompanyLink from './ui/companyLink'
 import { Instrument } from '~types/quotes'
 import { getRealtimeQuotes } from '~data/services/quotes-service'
+import { formatCurrency, formatPercent } from '~utils/formatters'
 
 export default function WatchList(){
   const dispatch = useDispatch()
@@ -80,9 +81,9 @@ export default function WatchList(){
             <CompanyLink exchange={instrument.exchange} symbol={instrument.symbol} />
             </td>
             <td className="px-4 py-2">{instrument.name}</td>
-            <td className="px-4 py-2">{instrument.currentPrice}</td>
-            <td className="px-4 py-2">{instrument.priceChange}</td>
-            <td className="px-4 py-2">{instrument.percentChange}</td>
+            <td className="px-4 py-2">{formatCurrency(instrument.currentPrice)}</td>
+            <td className="px-4 py-2">{formatCurrency(instrument.priceChange)}</td>
+            <td className="px-4 py-2">{formatPercent(instrument.percentChange)}</td>
             <td className="px-4 py-2">
             <WatchButton 
               instrumentId={instrument.instrumentId}
