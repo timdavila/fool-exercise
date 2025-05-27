@@ -1,52 +1,65 @@
-type CompanyDataProps  = {}
+export type CompanyDataProps  = {
+  dailyChangePct: string,
+  dailyChangeAmount: string,
+  dailyRangeMin: string,
+  dailyRangeMax: string,
+  yearRangeMin: string,
+  yearRangeMax: string,
+  beta: number,
+  marketCap: string,
+  employees: string,
+  marketCapPerEmployee: string,
+  grossMargin: string,
+  ceo: string
+}
 
-const CompanyData = () => {
+const CompanyData = ({dailyChangePct, dailyChangeAmount, dailyRangeMin, dailyRangeMax, yearRangeMin, yearRangeMax, beta, marketCap, employees, marketCapPerEmployee, grossMargin, ceo} : CompanyDataProps) => {
   return (
     <div className="bg-gradient-to-r from-black via-slate-900 to-black p-6 font-mono text-slate-300 border-l-4 border-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
       <dl className="grid grid-cols-2 gap-6">
         <div>
           <dt className="text-cyan-400 mb-1">Daily Change</dt>
-          <dd className="text-blue-400">+8.74% | $0.18</dd>
+          <dd className="text-blue-400">{dailyChangePct} | {dailyChangeAmount}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Daily Range</dt>
-          <dd>$2.02 - $2.39</dd>
+          <dd>{dailyRangeMin} - {dailyRangeMax}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">52-Week Range</dt>
-          <dd>$1.16 - $10.65</dd>
+          <dd>{yearRangeMin} - {yearRangeMax}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Beta (Volatility)</dt>
-          <dd>1.93 <span className="text-red-400">High</span></dd>
+          <dd>{beta} <span className="text-red-400">High</span></dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Market Cap</dt>
-          <dd>$561.41M</dd>
+          <dd>{marketCap}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Employees</dt>
-          <dd>796</dd>
+          <dd>{employees}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Market Cap / Employee</dt>
-          <dd>$0.71M</dd>
+          <dd>${marketCapPerEmployee}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">Gross Margin</dt>
-          <dd>12.31%</dd>
+          <dd>{grossMargin}</dd>
         </div>
         
         <div>
           <dt className="text-cyan-400 mb-1">CEO</dt>
-          <dd>Christian O. Henry, MBA</dd>
+          <dd>{ceo}</dd>
         </div>
       </dl>
     </div>
