@@ -2,6 +2,10 @@ import WatchButton from "~components/ui/watchButton"
 import ArticlesService from "~data/services/article-service"
 import apolloServerClient from "~lib/apollo-server-client"
 import CompanyLink from "~components/ui/companyLink"
+import { toggleWatchingInstrument } from '../../../store/watchListSlice'
+import { Instrument } from "~types/quotes";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from '../../../store'
 async function ArticlePage({
   params,
 }: {
@@ -11,6 +15,19 @@ async function ArticlePage({
   const client = await apolloServerClient()
   const articlesService = new ArticlesService(client)
   const article = await articlesService.getArticleByPath(path)
+  const watchlist = useSelector((state: RootState) => state.watchlist.instruments)
+  const dispatch = useDispatch()
+
+  const isWatched = watchlist.some(
+    watched => watched.instrumentId === recommendedInstrumentId
+  )
+  const handleToggleInstrument = () => {
+    dispatch(toggleWatchingInstrument({
+      instrumentId: article.recommendations[0].instrument.instrument_id,
+      exchange: article.recommendations[0].instrument.exchange,
+      symbol: article.recommendations[0].instrument.symbol
+    } as Instrument))
+  }
 
   const recommendedInstrumentId = article.recommendations.length && article.recommendations[0].instrument.instrument_id
   
@@ -56,7 +73,7 @@ async function ArticlePage({
         <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
           {article.headline}
         </span>
-        {recommendedInstrumentId && <WatchButton instrumentId={recommendedInstrumentId}/>}
+        {recommendedInstrumentId && <WatchButton isCurrentlyWatching={isWatched} toggleWatching={handleToggleInstrument} instrumentId={recommendedInstrumentId}/>}
       </h1>
       
       <p className="text-cyan-300 text-lg mb-6 leading-relaxed">
