@@ -1,7 +1,7 @@
 import WatchButton from "~components/ui/watchButton"
 import ArticlesService from "~data/services/article-service"
 import apolloServerClient from "~lib/apollo-server-client"
-
+import CompanyLink from "~components/ui/companyLink"
 async function ArticlePage({
   params,
 }: {
@@ -13,6 +13,42 @@ async function ArticlePage({
   const article = await articlesService.getArticleByPath(path)
 
   const recommendedInstrumentId = article.recommendations.length && article.recommendations[0].instrument.instrument_id
+  
+  const processBody = (content: string) => {
+    const parts: (JSX.Element | string)[] = []
+    let lastIndex = 0
+  
+    const regex = /\(([A-Z]+): ([A-Z]+)\)/g
+    let match: RegExpExecArray | null
+  
+    while ((match = regex.exec(content)) !== null) {
+      const [fullMatch, exchange, symbol] = match
+      const precedingText = content.slice(lastIndex, match.index)
+      if (precedingText) {
+        parts.push(precedingText)
+      }
+  
+      parts.push(
+        <CompanyLink key={match.index} exchange={exchange} symbol={symbol} />
+      )
+  
+      lastIndex = regex.lastIndex
+    }
+  
+    const remainingText = content.slice(lastIndex)
+    if (remainingText) {
+      parts.push(remainingText)
+    }
+  
+    return parts.map((part, i) => {
+      if (typeof part === 'string') {
+        return (
+          <span key={i} dangerouslySetInnerHTML={{ __html: part }} />
+        )
+      }
+      return part // JSX element
+    })
+  }
 
   return (
     <div className="bg-gradient-to-r from-black via-slate-900 to-black p-8 font-mono text-slate-300 border-l-4 border-cyan-500 shadow-[0_0_15px_rgba(34,211,238,0.3)] rounded-r-lg">
@@ -27,9 +63,9 @@ async function ArticlePage({
         {article.promo}
       </p>
       
-      <p className="text-slate-300 leading-relaxed bg-slate-900/50 p-6 rounded-lg border border-cyan-500/30">
-        {article.body}
-      </p>
+      <div className="text-slate-300 leading-relaxed bg-slate-900/50 p-6 rounded-lg border border-cyan-500/30">
+        <div>{processBody(article.body)}</div>
+      </div>
     </div>
   )
 }
